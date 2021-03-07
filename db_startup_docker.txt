@@ -1,3 +1,0 @@
-docker run --rm --name serialminder-db -e POSTGRES_USER=serialminder -e POSTGRES_PASSWORD=serialminder -e POSTGRES_DB=serialminder -p 5432:5432 -v serialminder-db:/var/lib/postgresql/data postgres
-
-psql -U serialminder -d serialminder -a -f *.sql
