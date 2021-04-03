@@ -1,6 +1,6 @@
-package com.timjaanson.serialminder.errors;
+package com.timjaanson.serialminder.util;
 
-import com.timjaanson.serialminder.errors.exceptions.SeriesAlreadyExistsException;
+import com.timjaanson.serialminder.series.exceptions.SeriesAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

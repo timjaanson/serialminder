@@ -1,4 +1,4 @@
-package com.timjaanson.serialminder.errors;
+package com.timjaanson.serialminder.util;
 
 import java.time.Instant;
 

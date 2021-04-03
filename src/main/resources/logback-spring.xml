@@ -37,7 +37,13 @@
         <appender-ref ref="Console" />
     </root>
 
-    <logger name="com.timjaanson.serialminder" level="debug" additivity="false">
+    <!-- set to debug to log incoming requests to api -->
+    <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="info">
+        <appender-ref ref="RollingFile" />
+        <appender-ref ref="Console" />
+    </logger>
+
+    <logger name="com.timjaanson.serialminder" level="info" additivity="false">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </logger>

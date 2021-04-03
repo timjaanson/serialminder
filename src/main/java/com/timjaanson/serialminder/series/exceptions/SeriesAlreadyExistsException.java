@@ -1,4 +1,4 @@
-package com.timjaanson.serialminder.errors.exceptions;
+package com.timjaanson.serialminder.series.exceptions;
 
 public class SeriesAlreadyExistsException extends RuntimeException {
     public SeriesAlreadyExistsException() {

@@ -1,5 +1,6 @@
-package com.timjaanson.serialminder.model;
+package com.timjaanson.serialminder.series;
 
+import com.timjaanson.serialminder.series.dto.Series;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

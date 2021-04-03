@@ -1,4 +1,4 @@
-package com.timjaanson.serialminder.errors.exceptions;
+package com.timjaanson.serialminder.traktapi.exceptions;
 
 public class TraktAPIException extends RuntimeException {
     public TraktAPIException() {

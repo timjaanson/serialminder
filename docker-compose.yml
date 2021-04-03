@@ -15,8 +15,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=serialminder
       - SPRING_DATASOURCE_PASSWORD=serialminder
     ports:
-      - "80:10042"
-          
+      - "10041:10042"
+
   serialminder-db:
     image: 'postgres:13.1-alpine'
     container_name: serialminder-db

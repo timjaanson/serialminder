@@ -1,6 +1,8 @@
-package com.timjaanson.serialminder.service;
+package com.timjaanson.serialminder.checker;
 
-import com.timjaanson.serialminder.model.Series;
+import com.timjaanson.serialminder.series.dto.Series;
+import com.timjaanson.serialminder.series.SeriesService;
+import com.timjaanson.serialminder.notify.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -15,13 +17,13 @@ import java.util.List;
 
 @Service
 @EnableScheduling
-public class ReminderService implements InitializingBean {
-    private final Logger log = LoggerFactory.getLogger(ReminderService.class);
+public class CheckerService implements InitializingBean {
+    private final Logger log = LoggerFactory.getLogger(CheckerService.class);
 
-    @Value("${reminder.cron.enabled:false}")
+    @Value("${checker.cron.enabled:false}")
     private boolean cronEnabled;
 
-    @Value("${reminder.startup.enabled:false}")
+    @Value("${checker.startup.enabled:false}")
     private boolean runOnStartup;
 
     @Autowired
@@ -33,33 +35,34 @@ public class ReminderService implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         if (runOnStartup) {
-            checkForNewSeasonsForAllShows();
+            checkAndNotifyForNewSeasonsForAllShows();
         } else {
-            log.info("ReminderService disabled on startup");
+            log.info("CheckerService disabled on startup");
         }
 
         if (!cronEnabled) {
-            log.info("Scheduled ReminderService is disabled");
+            log.info("Scheduled CheckerService is disabled");
         }
     }
 
-    @Scheduled(cron = "${reminder.cron.value:0 0 15 * * FRI}")
+    // at 15:00 every day
+    @Scheduled(cron = "${checker.cron.value:0 0 15 * * *}")
     public void scheduledCheck() {
         if (cronEnabled) {
-            checkForNewSeasonsForAllShows();
+            checkAndNotifyForNewSeasonsForAllShows();
         }
     }
 
-    public void checkForNewSeasonsForAllShows() {
+    public List<Series> checkAndNotifyForNewSeasonsForAllShows() {
         log.info("Starting new season check for all shows");
         List<Series> seriesForChecking = seriesService.getSeriesForNewSeasonCheck();
         List<Series> seriesWithNewSeasons = new ArrayList<>();
         seriesForChecking.forEach(series -> {
             log.info("Checking series {}...", series.getName());
             if (seriesService.isNewSeasonAvailable(series)) {
-                //TODO return new series object with updated seasons info
-                log.info("New season for series: {}({}), currently available seasons: {}", series.getName(), series.getId(), series.getAvailableSeasons() + 1);
-                seriesWithNewSeasons.add(series);
+                Series updatedSeries = seriesService.getSeriesById(series.getId());
+                log.info("New season for series: {}({}), currently available seasons: {}", updatedSeries.getName(), updatedSeries.getId(), updatedSeries.getAvailableSeasons());
+                seriesWithNewSeasons.add(updatedSeries);
             } else {
                 log.info("No new season for series: {}({}), currently available seasons: {}", series.getName(), series.getId(), series.getAvailableSeasons());
             }
@@ -68,6 +71,7 @@ public class ReminderService implements InitializingBean {
         if (!seriesWithNewSeasons.isEmpty()) {
             notificationService.notify(seriesWithNewSeasons);
         }
+        return seriesWithNewSeasons;
     }
 
 

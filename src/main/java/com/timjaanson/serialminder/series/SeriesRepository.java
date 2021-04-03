@@ -1,7 +1,6 @@
-package com.timjaanson.serialminder.repository;
+package com.timjaanson.serialminder.series;
 
-import com.timjaanson.serialminder.model.Series;
-import com.timjaanson.serialminder.model.SeriesRowMapper;
+import com.timjaanson.serialminder.series.dto.Series;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,7 +25,7 @@ public class SeriesRepository {
         return jdbcTemplate.query(sql, new SeriesRowMapper());
     }
 
-    public Series getSeries(String id) {
+    public Series getSeriesById(String id) {
         String sql = "SELECT * FROM series WHERE id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new SeriesRowMapper(), id);
@@ -53,7 +52,7 @@ public class SeriesRepository {
     }
 
     public boolean addSeries(Series series) {
-        if (getSeries(series.getId()) == null) {
+        if (getSeriesById(series.getId()) == null) {
             String sql = "INSERT INTO series (id, name, available_seasons, last_checked) VALUES (?, ?, ?, ?)";
             jdbcTemplate.update(sql,
                     series.getId(),
