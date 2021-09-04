@@ -1,4 +1,4 @@
-FROM maven:3.6.0-jdk-11-slim AS build
+FROM adoptopenjdk/maven-openjdk11:latest AS build
 COPY src /app/src
 COPY pom.xml /app
 WORKDIR /app

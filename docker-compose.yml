@@ -5,6 +5,7 @@ volumes:
 services:
   app:
     image: 'docker-spring-boot-postgres:latest'
+    restart: always
     build:
       context: .
     container_name: app
@@ -19,6 +20,7 @@ services:
 
   serialminder-db:
     image: 'postgres:13.1-alpine'
+    restart: always
     container_name: serialminder-db
     environment:
       - POSTGRES_USER=serialminder
