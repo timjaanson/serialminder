@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -36,15 +35,32 @@ public class SeriesService {
     }
 
     public void insertSeries(Series series) {
-        if (getSeriesById(series.getId()) == null) {
-            if (series.getAvailableSeasons() == null) {
-                series.setAvailableSeasons(getLatestAvailableSeason(series.getId()));
+        log.info("Adding new series: {}", series);
+        String id = series.getId();
+        if (id == null) {
+            throw new IllegalArgumentException("Missing id for new series");
+        }
+        if (getSeriesById(id) == null) {
+            Series seriesToBeAdded = new Series();
+            seriesToBeAdded.setId(id);
+
+            if (series.getName() == null) {
+                //TODO if name not set, get it by id from trakt
+                throw new IllegalArgumentException("Missing name for new series");
+            } else {
+                seriesToBeAdded.setName(series.getName());
             }
-            //TODO if name not set, get it by id
-            seriesRepository.addSeries(series);
+
+            if (series.getAvailableSeasons() == null) {
+                seriesToBeAdded.setAvailableSeasons(getLatestAvailableSeason(id));
+            } else {
+                seriesToBeAdded.setAvailableSeasons(series.getAvailableSeasons());
+            }
+
+            seriesRepository.addSeries(seriesToBeAdded);
         } else {
-            log.warn("Series with id {} already exists", series.getId());
-            throw new SeriesAlreadyExistsException("Series with id "+series.getId()+" already exists");
+            log.warn("Series with id {} already exists", id);
+            throw new SeriesAlreadyExistsException("Series with id "+id+" already exists");
         }
     }
 
@@ -58,14 +74,14 @@ public class SeriesService {
         return false;
     }
 
-    private Integer getLatestAvailableSeason(String id) {
+    Integer getLatestAvailableSeason(String id) {
         //TODO investigate trakt api next episode/last episode
 
         // some shows have season information set without any actual episodes out/confirmed
         List<TraktSeason> allSeasons = traktClient.getSeasonsAndEpisodesById(id);
-        Collections.reverse(allSeasons);
         int lastActuallyAvailableSeason = 0;
-        for (TraktSeason season : allSeasons){
+        for (int i = allSeasons.size() - 1; i >= 0; i--) {
+            TraktSeason season = allSeasons.get(i);
             if (!season.getEpisodes().isEmpty()) {
                 lastActuallyAvailableSeason = season.getNumber();
                 break;

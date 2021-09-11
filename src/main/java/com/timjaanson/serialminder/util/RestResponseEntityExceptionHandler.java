@@ -12,8 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value
-            = { SeriesAlreadyExistsException.class })
+    @ExceptionHandler(value = { SeriesAlreadyExistsException.class })
     protected ResponseEntity<Object> handleSeriesAlreadyExists(
             RuntimeException ex, WebRequest request) {
         ErrorResponse res = new ErrorResponse(HttpStatus.CONFLICT.value(),

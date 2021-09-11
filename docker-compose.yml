@@ -1,31 +1,27 @@
-version: '2'
+version: '3'
 
 volumes:
     serialminder-db:
 services:
   app:
     image: 'docker-spring-boot-postgres:latest'
+    env_file:
+      - .env_app
     restart: always
     build:
       context: .
     container_name: app
     depends_on:
       - serialminder-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://serialminder-db:5432/serialminder
-      - SPRING_DATASOURCE_USERNAME=serialminder
-      - SPRING_DATASOURCE_PASSWORD=serialminder
     ports:
       - "10041:10042"
 
   serialminder-db:
     image: 'postgres:13.1-alpine'
+    env_file:
+      - .env_db
     restart: always
     container_name: serialminder-db
-    environment:
-      - POSTGRES_USER=serialminder
-      - POSTGRES_PASSWORD=serialminder
-      - POSTGRES_DB=serialminder
     volumes:
       - serialminder-db:/var/lib/postgresql/data
       - ./db:/docker-entrypoint-initdb.d/

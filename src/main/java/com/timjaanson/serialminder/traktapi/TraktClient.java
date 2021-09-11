@@ -44,7 +44,7 @@ public class TraktClient implements InitializingBean {
         headers.add("trakt-api-key", apiKey);
         headers.add("trakt-api-version", apiVersion);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        requestEntity = new HttpEntity<>("body", headers);
+        requestEntity = new HttpEntity<>(headers);
     }
 
     public List<TraktSeason> getSeasonsById(String id) {
@@ -81,7 +81,7 @@ public class TraktClient implements InitializingBean {
         try {
             log.debug("GET request to {} {}", url, requestEntity);
             ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, String.class);
-            log.debug("Response: {}", responseEntity.toString());
+            log.debug("Response: {}", responseEntity);
             return responseEntity;
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {

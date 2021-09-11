@@ -1,8 +1,8 @@
 package com.timjaanson.serialminder.checker;
 
-import com.timjaanson.serialminder.series.dto.Series;
-import com.timjaanson.serialminder.series.SeriesService;
 import com.timjaanson.serialminder.notify.NotificationService;
+import com.timjaanson.serialminder.series.SeriesService;
+import com.timjaanson.serialminder.series.dto.Series;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -54,6 +54,15 @@ public class CheckerService implements InitializingBean {
     }
 
     public List<Series> checkAndNotifyForNewSeasonsForAllShows() {
+        List<Series> seriesWithNewSeasons = checkForNewSeasonsForAllShows();
+
+        if (!seriesWithNewSeasons.isEmpty()) {
+            notificationService.notify(seriesWithNewSeasons);
+        }
+        return seriesWithNewSeasons;
+    }
+
+    List<Series> checkForNewSeasonsForAllShows() {
         log.info("Starting new season check for all shows");
         List<Series> seriesForChecking = seriesService.getSeriesForNewSeasonCheck();
         List<Series> seriesWithNewSeasons = new ArrayList<>();
@@ -68,11 +77,7 @@ public class CheckerService implements InitializingBean {
             }
         });
 
-        if (!seriesWithNewSeasons.isEmpty()) {
-            notificationService.notify(seriesWithNewSeasons);
-        }
         return seriesWithNewSeasons;
     }
-
 
 }
