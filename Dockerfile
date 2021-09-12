@@ -5,5 +5,5 @@ WORKDIR /app
 RUN mvn clean install
 
 FROM openjdk:11-jre-slim
-COPY --from=build /app/target/serialminder-0.0.1-SNAPSHOT.jar /app/application.jar
+COPY --from=build /app/target/serialminder*.jar /app/application.jar
 ENTRYPOINT ["java", "-jar", "/app/application.jar"]
